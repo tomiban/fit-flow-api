@@ -5,9 +5,9 @@ const router = express.Router();
 
 router
 	.get("/", userController.getAllUsers)
+	.get("/:userId", userController.getUser)
 	.post("/", userController.createUser)
-/* 	.get("/userId", usersController.getRoutineById)
-	.patch("/:userId", usersController.updateRoutine)
-	.delete("/:userId", usersController.deleteRoutine); */
+	.patch("/:userId", userController.updateUser)
+	.delete("/:userId", userController.deleteUser);  
 
 export default router;
