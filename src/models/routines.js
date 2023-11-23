@@ -33,3 +33,6 @@ const rutinaSchema = new mongoose.Schema({
 		default: "en_espera",
 	},
 });
+
+
+export default mongoose.model("Routines", rutinaSchema)

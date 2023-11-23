@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/index.js",
+    "dev": "node --env-file=.env src/index.js",
     "start": "node index.js"
   },
   "author": "tomib4n",

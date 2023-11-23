@@ -1,14 +1,10 @@
 import express from 'express';
-import routineRoutes from './routineRoutes.js';
-
+import routineRoutes from './routinesRoutes.js';
+import usersRoutes from './usersRoutes.js'
 const router = express.Router();
 
 router.use('/routines',routineRoutes);
-router.use('/exercises',);
-router.use('/users',routineRoutes);
-router.use('/categories',routineRoutes);
+router.use('/users', usersRoutes)
 
 
-
-
-export default router
+export default router 

@@ -1,60 +1,30 @@
-// services/rutinaService.js
-import Rutina from "../models/rutina.js";
-import mongoose from 'mongoose'
 
-const getAllRoutines = async () => {
-	try {
-		const allRoutines = await Rutina.find();
-		return allRoutines;
-	} catch (error) {
-		console.error("Error al obtener todas las rutinas:", error);
-		throw error;
-	}
+import { v4 as uuid } from "uuid";
+
+const getAllRoutines = () => {
+	const allRoutines = Rutinas.getAllRoutinesDb();
+	return allRoutines;
+};
+const getRoutineById = (routineId) => {
+	const routine = Rutinas.getRoutineById(routineId);
+	return routine;
+};
+const createNewRoutine = (routine) => {
+	const newRoutine = {
+		...routine,
+	};
+
+	const createdRoutine = Rutinas.createNewRoutine(newRoutine);
+	return createdRoutine;
 };
 
-const getRoutineById = async (routineId) => {
-	try {
-		const routine = await Rutina.findById(routineId);
-		return routine;
-	} catch (error) {
-		console.error("Error al obtener la rutina por ID:", error);
-		throw error;
-	}
+const updateRoutine = (routineId, changes) => {
+	const updatedRoutine = Rutinas.updateRoutine(routineId, changes);
+	return updatedRoutine;
 };
-
-const createNewRoutine = async (routine) => {
-	try {
-		const newRoutine = new Rutina({
-			...routine,
-		});
-		const createdRoutine = await newRoutine.save();
-		return createdRoutine;
-	} catch (error) {
-		console.error("Error al crear una nueva rutina:", error);
-		throw error;
-	}
-};
-
-const updateRoutine = async (routineId, changes) => {
-	try {
-		const updatedRoutine = await Rutina.findByIdAndUpdate(routineId, changes, {
-			new: true,
-		});
-		return updatedRoutine;
-	} catch (error) {
-		console.error("Error al actualizar la rutina:", error);
-		throw error;
-	}
-};
-
-const deleteRoutine = async (routineId) => {
-	try {
-		const deletedRoutine = await Rutina.findByIdAndDelete(routineId);
-		return deletedRoutine;
-	} catch (error) {
-		console.error("Error al eliminar la rutina:", error);
-		throw error;
-	}
+const deleteRoutine = (routineId) => {
+	
+	return Rutinas.deleteRoutine(routineId);
 };
 
 export default {
