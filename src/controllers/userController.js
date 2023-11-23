@@ -8,7 +8,13 @@ const userService = createService(User);
 const getAllUsers = async (req, res) => {
 	try {
 		const allUsers = await userService.getAll();
-		res.status(200).json(allUsers);
+		res.status(200).json({
+			status: "success",
+			results: allUsers.length,
+			data: {
+				allUsers,
+			},
+		});
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
@@ -21,7 +27,20 @@ const getUser = async (req, res) => {
 		} = req;
 
 		const user = await userService.getById(userId);
-		res.status(200).json(user);
+
+		if (!user) {
+			return res.status(404).json({
+				status: "fail",
+				message: "Invalid ID",
+			});
+		}
+
+		res.status(200).json({
+			status: "success",
+			data: {
+				user,
+			},
+		});
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
@@ -29,8 +48,14 @@ const getUser = async (req, res) => {
 
 const createUser = async (req, res) => {
 	try {
-		const newUser = await userService.create(req.body);
-		res.status(201).json(newUser);
+		const { body } = req;
+		const newUser = await userService.create(body);
+		res.status(201).json({
+			status: "success",
+			data: {
+				user: newUser,
+			},
+		});
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
@@ -43,16 +68,29 @@ const updateUser = async (req, res) => {
 			params: { userId },
 		} = req;
 
-		if (!userId) {
-			res.status(400).json({
-				status: "FAILED",
-				data: {
-					error: "Bad Request",
-				},
+		const props = Object.keys(User.schema.paths);
+		const invalidProps = Object.keys(body).some(
+			(prop) => !props.includes(prop)
+		);
+
+		if (invalidProps) {
+			return res.status(400).json({
+				status: "fail",
+				message: "Bad Request",
 			});
 		}
 
 		const updatedUser = await userService.update(userId, body);
+
+		if (!updatedUser) {
+			return res.status(400).json({
+				status: "fail",
+				data: {
+					error: "Invalid ID",
+				},
+			});
+		}
+
 		res.status(200).json(updatedUser);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
@@ -64,12 +102,21 @@ const deleteUser = async (req, res) => {
 		const {
 			params: { userId },
 		} = req;
-	
+
+		const userRemoved = await userService.remove(userId);
+
+		if (!userRemoved) {
+			return res.status(400).json({
+				status: "fail",
+				message: "Invalid ID",
+			});
+		}
+
+		res.status(204).json({
+			status: "success",
+			data: null,
+		});
 		
-		const userRemoved = await userService.remove(userId)
-		console.log(userRemoved);
-		
-		res.status(204).json();
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
@@ -80,5 +127,5 @@ export default {
 	createUser,
 	updateUser,
 	getUser,
-	deleteUser
+	deleteUser,
 };

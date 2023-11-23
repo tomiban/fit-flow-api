@@ -1,6 +1,4 @@
 import 'dotenv/config'
-
-// In src/index.js
 import express from 'express'; 
 import cors from 'cors';
 import v1Router from './v1/routes/index.js';
