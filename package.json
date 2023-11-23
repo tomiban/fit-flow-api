@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --experimental-specifier-resolution=node src/server.js",
+    "dev": "nodemon src/server.js",
     "start": "node index.js"
   },
   "author": "tomib4n",
