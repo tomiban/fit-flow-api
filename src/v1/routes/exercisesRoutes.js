@@ -5,7 +5,7 @@ const router = express.Router();
 
 router
   .get("/", exerciseController.getExercises)
-  .post("/", exerciseController.createExercise)
+  .post("/", exerciseController.checkData, exerciseController.createExercise)
   .delete("/:id", exerciseController.deleteExercise)
   .patch("/:id", exerciseController.updateExercise);
 

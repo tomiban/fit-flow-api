@@ -4,17 +4,11 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import v1Router from "./v1/routes/index.js";
-import { dbConnect } from "./config/mongo.js";
+import morgan from "morgan";
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+export const app = express();
 
+app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
 app.use("/api/v1", v1Router);
-
-app.listen(PORT, () => {
-  console.log(`API is listening on port http://localhost:${PORT}/api/v1/ `);
-});
-
-dbConnect();

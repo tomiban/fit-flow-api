@@ -1,3 +1,15 @@
+const checkData = async (req, res, next) => {
+  const { name, weigth } = req.body;
+  try {
+    if (!name || !weigth) {
+      return res.status(400).json({ error: "Data missing" });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+  next();
+};
+
 const getExercises = async (req, res) => {
   try {
     const exercises = [{ name: "biceps" }, { name: "sentadilla" }];
@@ -40,4 +52,5 @@ export default {
   createExercise,
   deleteExercise,
   updateExercise,
+  checkData,
 };
