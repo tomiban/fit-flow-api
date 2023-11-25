@@ -22,7 +22,7 @@ const genericServices = (model) => {
 
 		create: async (itemData) => {
 			try {
-				const newItem = model(itemData);
+				const newItem = new model(itemData);
 				return await newItem.save();
 			} catch (error) {
 				throw new Error(error.message);

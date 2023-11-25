@@ -1,6 +1,6 @@
 // userController.js
 
-import createService from "../services/genericServices.js";
+import createService from "../services/crudOperations.js";
 import User from "../models/users.js";
 
 const userService = createService(User);
