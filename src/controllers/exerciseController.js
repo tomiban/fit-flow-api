@@ -1,7 +1,9 @@
+import Exercises from "../models/exercises.js";
+import genericServices from "../services/genericServices.js";
 const checkData = async (req, res, next) => {
-  const { name, weigth } = req.body;
+  const { name, category } = req.body;
   try {
-    if (!name || !weigth) {
+    if (!name || !category) {
       return res.status(400).json({ error: "Data missing" });
     }
   } catch (error) {
@@ -12,8 +14,8 @@ const checkData = async (req, res, next) => {
 
 const getExercises = async (req, res) => {
   try {
-    const exercises = [{ name: "biceps" }, { name: "sentadilla" }];
-    res.status(200).json(exercises);
+    const exercises = await genericServices(Exercises).getAll();
+    res.status(200).json({ status: "success", data: exercises });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -21,9 +23,17 @@ const getExercises = async (req, res) => {
 
 const createExercise = async (req, res) => {
   try {
-    res
-      .status(201)
-      .json({ status: "success", data: { exercise: { name: "biceps" } } });
+    const { name, actualWeigth, maxWeigth, instruction, link, category } =
+      req.body;
+    const createdExercise = await genericServices(Exercises).create({
+      name,
+      actualWeigth,
+      maxWeigth,
+      instruction,
+      link,
+      category,
+    });
+    res.status(201).json({ status: "success", data: { createdExercise } });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
