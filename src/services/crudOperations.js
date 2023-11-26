@@ -1,4 +1,4 @@
-const genericServices = (model) => {
+const crudOperations = (model) => {
 	return {
 		getAll: async () => {
 			try {
@@ -55,4 +55,4 @@ const genericServices = (model) => {
 	};
 };
 
-export default genericServices;
+export default crudOperations;
