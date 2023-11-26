@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const exercisesScheme = new mongoose.Schema(
   {
-    userID: {
+    userId: {
       type: mongoose.Types.ObjectId,
       required: [true, "User ID is required"],
     },

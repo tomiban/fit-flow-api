@@ -7,8 +7,8 @@ router
   .get("/", exerciseController.getExercises)
   .get("/:id", exerciseController.checkId, exerciseController.getExerciseById)
   .get(
-    "/users/:id",
-    exerciseController.checkId,
+    "/users/:userId",
+    exerciseController.checkUserId,
     exerciseController.getExerciseByUserID
   )
   .post("/", exerciseController.checkData, exerciseController.createExercise)
