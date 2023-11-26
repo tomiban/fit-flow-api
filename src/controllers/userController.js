@@ -2,7 +2,7 @@
 
 import createService from "../services/crudOperations.js";
 import User from "../models/users.js";
-
+import { matchedData } from "express-validator";
 
 const userService = createService(User);
 
@@ -23,9 +23,9 @@ const getAllUsers = async (req, res) => {
 
 const getUser = async (req, res) => {
 	try {
-		const {
-			params: { userId },
-		} = req;
+		req = matchedData(req);
+
+		const { userId } = req;
 
 		const user = await userService.getById(userId);
 
@@ -49,8 +49,7 @@ const getUser = async (req, res) => {
 
 const createUser = async (req, res) => {
 	try {
-		const { body } = req;
-	
+		const body = matchedData(req);
 
 		const newUser = await userService.create(body);
 		res.status(201).json({
@@ -66,22 +65,8 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
 	try {
-		const {
-			body,
-			params: { userId },
-		} = req;
-
-		const props = Object.keys(User.schema.paths);
-		const invalidProps = Object.keys(body).some(
-			(prop) => !props.includes(prop)
-		);
-
-		if (invalidProps) {
-			return res.status(400).json({
-				status: "fail",
-				message: "Bad Request",
-			});
-		}
+		req = matchedData(req);
+		const { userId, ...body } = req;
 
 		const updatedUser = await userService.update(userId, body);
 

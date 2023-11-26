@@ -22,6 +22,7 @@ const validatorCreateUser = [
 		.notEmpty()
 		.isISO8601()
 		.withMessage("Date of birth must be in a valid ISO 8601 format"),
+	check("userId").exists().isMongoId(),
 	(req, res, next) => validateResults(req, res, next),
 ];
 
@@ -34,9 +35,7 @@ const validatorUpdateUser = [
 			// Verificar si el nombre de usuario ya existe en la base de datos
 			const existingUser = await users.findOne({ username: value });
 			if (existingUser && existingUser._id.toString() !== req.params.userId) {
-				throw new Error(
-					"This username is already exist."
-				);
+				throw new Error("This username is already exist.");
 			}
 			return true;
 		}),
@@ -64,9 +63,7 @@ const validatorUpdateUser = [
 			// Verificar si el correo electrónico ya existe en la base de datos
 			const existingEmail = await users.findOne({ email: value });
 			if (existingEmail && existingEmail._id.toString() !== req.params.userId) {
-				throw new Error(
-					"This email is already associated with another user."
-				);
+				throw new Error("This email is already associated with another user.");
 			}
 			return true;
 		}),
@@ -75,13 +72,16 @@ const validatorUpdateUser = [
 		.optional()
 		.isISO8601()
 		.withMessage(
-			"La fecha de nacimiento debe estar en un formato ISO 8601 válido")
-		.custom(async (value, { req }) => {
-			
-		})
-	,
-		
+			"La fecha de nacimiento debe estar en un formato ISO 8601 válido"
+		)
+		.custom(async (value, { req }) => {}),
+	check("userId").exists().isMongoId(),
 	(req, res, next) => validateResults(req, res, next),
 ];
 
-export { validatorCreateUser, validatorUpdateUser };
+const validatorGetUser = [
+	check("userId").exists().isMongoId(),
+	(req, res, next) => validateResults(req, res, next),
+];
+
+export { validatorCreateUser, validatorUpdateUser, validatorGetUser };

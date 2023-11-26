@@ -9,4 +9,3 @@ export const validateResults = (req, res, next) => {
 		res.send({ errors: error.array() });
 	}
 };
-
