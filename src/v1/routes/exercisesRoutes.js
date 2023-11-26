@@ -12,11 +12,11 @@ router
     exerciseController.getExerciseByUserID
   )
   .post("/", exerciseController.checkData, exerciseController.createExercise)
-  .delete("/:id", exerciseController.deleteExercise)
+  .delete("/:id", exerciseController.checkId, exerciseController.deleteExercise)
   .patch(
     "/:id",
     exerciseController.checkId,
-    exerciseController.checkData,
+    exerciseController.checkDataToUpdate,
     exerciseController.updateExercise
   );
 
