@@ -1,8 +1,25 @@
+import Exercises from "../models/exercises.js";
+import crudOperations from "../services/crudOperations.js";
+
+const exerciseService = crudOperations(Exercises);
+
 const checkData = async (req, res, next) => {
-  const { name, weigth } = req.body;
+  const { name, category } = req.body;
   try {
-    if (!name || !weigth) {
+    if (!name || !category) {
       return res.status(400).json({ error: "Data missing" });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+  next();
+};
+
+const checkId = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    if (!id) {
+      return res.status(400).json({ error: "Id missing" });
     }
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -12,18 +29,64 @@ const checkData = async (req, res, next) => {
 
 const getExercises = async (req, res) => {
   try {
-    const exercises = [{ name: "biceps" }, { name: "sentadilla" }];
-    res.status(200).json(exercises);
+    const exercises = await exerciseService.getAll();
+    res.status(200).json({ status: "success", data: exercises });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(404).json({ error: error.message });
   }
 };
 
 const createExercise = async (req, res) => {
   try {
-    res
-      .status(201)
-      .json({ status: "success", data: { exercise: { name: "biceps" } } });
+    const createdExercise = await exerciseService.create(req.body);
+    res.status(201).json({ status: "success", data: { createdExercise } });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getExerciseById = async (req, res) => {
+  try {
+    console.log("entra aca");
+    const { id } = req.params;
+
+    const exercise = await exerciseService.getById(id);
+    console.log("test");
+    if (!exercise) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Invalid ID",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        exercise,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getExercise = async (req, res) => {
+  try {
+    const exercise = await exerciseService.getById(req.body);
+
+    if (!exercise) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Invalid ID",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        exercise,
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -53,4 +116,7 @@ export default {
   deleteExercise,
   updateExercise,
   checkData,
+  getExerciseById,
+  checkId,
+  getExercise,
 };
