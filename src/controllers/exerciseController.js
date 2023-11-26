@@ -1,7 +1,7 @@
 import Exercises from "../models/exercises.js";
-import genericServices from "../services/genericServices.js";
+import crudOperations from "../services/crudOperations.js";
 
-const exerciseService = genericServices(Exercises);
+const exerciseService = crudOperations(Exercises);
 
 const checkData = async (req, res, next) => {
   const { name, category } = req.body;
