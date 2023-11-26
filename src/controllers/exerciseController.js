@@ -47,11 +47,10 @@ const createExercise = async (req, res) => {
 
 const getExerciseById = async (req, res) => {
   try {
-    console.log("entra aca");
     const { id } = req.params;
 
     const exercise = await exerciseService.getById(id);
-    console.log("test");
+
     if (!exercise) {
       return res.status(404).json({
         status: "fail",
@@ -125,9 +124,20 @@ const deleteExercise = async (req, res) => {
 
 const updateExercise = async (req, res) => {
   try {
-    res
-      .status(200)
-      .json({ status: "success", data: { exercise: { name: "biceps" } } });
+    const { id } = req.params;
+    const exercise = await exerciseService.update(id, req.body);
+    if (!exercise) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Invalid ID",
+      });
+    }
+    res.status(200).json({
+      status: "success",
+      data: {
+        exercise,
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

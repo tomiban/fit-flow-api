@@ -13,6 +13,11 @@ router
   )
   .post("/", exerciseController.checkData, exerciseController.createExercise)
   .delete("/:id", exerciseController.deleteExercise)
-  .patch("/:id", exerciseController.updateExercise);
+  .patch(
+    "/:id",
+    exerciseController.checkId,
+    exerciseController.checkData,
+    exerciseController.updateExercise
+  );
 
 export default router;
