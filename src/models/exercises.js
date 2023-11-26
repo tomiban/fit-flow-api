@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const exercisesScheme = new mongoose.Schema(
   {
+    userID: {
+      type: mongoose.Types.ObjectId,
+      required: [true, "User ID is required"],
+    },
     name: { type: String, required: [true, "Name is required"] },
     actualWeigth: { type: Number },
     maxWeigth: { type: Number },

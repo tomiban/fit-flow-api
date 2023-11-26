@@ -4,9 +4,9 @@ import crudOperations from "../services/crudOperations.js";
 const exerciseService = crudOperations(Exercises);
 
 const checkData = async (req, res, next) => {
-  const { name, category } = req.body;
+  const { name, category, userID } = req.body;
   try {
-    if (!name || !category) {
+    if (!name || !category || !userID) {
       return res.status(400).json({ error: "Data missing" });
     }
   } catch (error) {
@@ -52,6 +52,29 @@ const getExerciseById = async (req, res) => {
 
     const exercise = await exerciseService.getById(id);
     console.log("test");
+    if (!exercise) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Invalid ID",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        exercise,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getExerciseByUserID = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const exercise = await exerciseService.find({ userID: id });
     if (!exercise) {
       return res.status(404).json({
         status: "fail",
@@ -119,4 +142,5 @@ export default {
   getExerciseById,
   checkId,
   getExercise,
+  getExerciseByUserID,
 };

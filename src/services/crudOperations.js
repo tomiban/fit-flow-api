@@ -52,6 +52,17 @@ const crudOperations = (model) => {
         throw new Error(error.message);
       }
     },
+
+    find: async (data) => {
+      try {
+        return await model.find(data);
+      } catch (error) {
+        if (error.name === "CastError") {
+          return null;
+        }
+        throw new Error(error.message);
+      }
+    },
   };
 };
 
