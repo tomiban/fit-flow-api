@@ -3,6 +3,7 @@
 import createService from "../services/crudOperations.js";
 import User from "../models/users.js";
 
+
 const userService = createService(User);
 
 const getAllUsers = async (req, res) => {
@@ -49,18 +50,8 @@ const getUser = async (req, res) => {
 const createUser = async (req, res) => {
 	try {
 		const { body } = req;
-		if (
-			!body.username ||
-			!body.email ||
-			!body.password ||
-			!body.firstName ||
-			!body.lastName
-		) {
-			return res.status(400).json({
-				status: "fail",
-				message: "Required fields are missing",
-			});
-		}
+	
+
 		const newUser = await userService.create(body);
 		res.status(201).json({
 			status: "success",
