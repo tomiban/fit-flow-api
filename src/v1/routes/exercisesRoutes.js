@@ -7,12 +7,17 @@ router
   .get("/", exerciseController.getExercises)
   .get("/:id", exerciseController.checkId, exerciseController.getExerciseById)
   .get(
-    "/users/:id",
-    exerciseController.checkId,
+    "/users/:userId",
+    exerciseController.checkUserId,
     exerciseController.getExerciseByUserID
   )
   .post("/", exerciseController.checkData, exerciseController.createExercise)
-  .delete("/:id", exerciseController.deleteExercise)
-  .patch("/:id", exerciseController.updateExercise);
+  .delete("/:id", exerciseController.checkId, exerciseController.deleteExercise)
+  .patch(
+    "/:id",
+    exerciseController.checkId,
+    exerciseController.checkDataToUpdate,
+    exerciseController.updateExercise
+  );
 
 export default router;

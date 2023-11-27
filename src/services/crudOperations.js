@@ -33,6 +33,7 @@ const crudOperations = (model) => {
       try {
         return await model.findByIdAndUpdate(itemId, updatedData, {
           new: true,
+          runValidators: true,
         });
       } catch (error) {
         if (error.name === "CastError") {
