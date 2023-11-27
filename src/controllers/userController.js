@@ -23,9 +23,7 @@ const getAllUsers = async (req, res) => {
 
 const getUser = async (req, res) => {
 	try {
-		req = matchedData(req);
-
-		const { userId } = req;
+		const { userId } = matchedData(req)
 
 		const user = await userService.getById(userId);
 
@@ -49,7 +47,7 @@ const getUser = async (req, res) => {
 
 const createUser = async (req, res) => {
 	try {
-		const body = matchedData(req);
+		const { ...body } = matchedData(req);
 
 		const newUser = await userService.create(body);
 		res.status(201).json({

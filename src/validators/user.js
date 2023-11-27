@@ -45,12 +45,9 @@ const validatorCreateUser = [
 		.withMessage("Password must be at least 6 characters"),
 
 	check("birthDate")
-		.exists()
-		.notEmpty()
-		.isISO8601()
-		.withMessage("Date of birth must be in a valid ISO 8601 format"),
-
-	check("userId").exists().isMongoId(),
+		.optional()
+		.toDate()
+		,
 
 	(req, res, next) => validateResults(req, res, next),
 ];
@@ -88,7 +85,7 @@ const validatorUpdateUser = [
 		.withMessage("Age must be a number between 5 and 150"),
 
 	check("password")
-		.exists()
+		.optional()
 		.notEmpty()
 		.isLength({ min: 6, max: 50 })
 		.withMessage("Password must be at least 6 characters"),
@@ -111,13 +108,12 @@ const validatorUpdateUser = [
 
 	check("birthDate")
 		.optional()
-		.isISO8601()
-		.withMessage("Date of birth must be in a valid ISO 8601 format"),
+		.toDate(),
 	(req, res, next) => validateResults(req, res, next),
 ];
 
 const validatorIdUser = [
-	check("userId").exists().isMongoId(),
+	check("userId").exists().isMongoId().withMessage("Invalid ID"),
 	(req, res, next) => validateResults(req, res, next),
 ];
 
