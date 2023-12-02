@@ -45,7 +45,7 @@ const crudOperations = model => {
 
         remove: async itemId => {
             try {
-                return await model.findByIdAndDelete(itemId);
+                return await model.delete({_id: itemId});
             } catch (error) {
                 if (error.name === "CastError") {
                     return null;

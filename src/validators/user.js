@@ -1,11 +1,7 @@
 import {check} from "express-validator";
 import {validateResults} from "../utils/handleValidator.js";
 import User from "../models/users.js";
-
-const isFieldAlreadyInUse = async (fieldName, value, userId, model) => {
-    const existingRecord = await model.findOne({[fieldName]: value});
-    return existingRecord && existingRecord._id.toString() !== userId;
-};
+import {isFieldAlreadyInUse} from "../utils/handleValidator.js";
 
 const validatorCreateUser = [
     check("username")

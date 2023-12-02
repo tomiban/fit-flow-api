@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import MongooseDelete from "mongoose-delete";
 
 const userSchema = new mongoose.Schema(
     {
@@ -21,6 +22,7 @@ const userSchema = new mongoose.Schema(
         password: {
             type: String,
             required: true,
+            select: false,
         },
         birthDate: {type: Date},
     },
@@ -29,5 +31,5 @@ const userSchema = new mongoose.Schema(
         versionKey: false,
     }
 );
-
+userSchema.plugin(MongooseDelete, {overrideMethods: "all"});
 export default mongoose.model("Users", userSchema);
