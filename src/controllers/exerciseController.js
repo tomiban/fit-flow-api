@@ -4,191 +4,189 @@ import crudOperations from "../services/crudOperations.js";
 const exerciseService = crudOperations(Exercises);
 
 const checkData = async (req, res, next) => {
-  const { name, category, userId } = req.body;
-  try {
-    if (!name || !category || !userId) {
-      return res.status(400).json({ error: "Data missing" });
+    const {name, category, userId} = req.body;
+    try {
+        if (!name || !category || !userId) {
+            return res.status(400).json({error: "Data missing"});
+        }
+    } catch (error) {
+        return res.status(500).json({error: error.message});
     }
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-  next();
+    next();
 };
 
 const checkDataToUpdate = async (req, res, next) => {
-  const { name, category, userId } = req.body;
-  try {
-    if (!name && !category && !userId) {
-      return res.status(400).json({ error: "Data missing" });
+    const {name, category, userId} = req.body;
+    try {
+        if (!name && !category && !userId) {
+            return res.status(400).json({error: "Data missing"});
+        }
+    } catch (error) {
+        return res.status(500).json({error: error.message});
     }
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-  next();
+    next();
 };
 
 const checkId = async (req, res, next) => {
-	const { id } = req.params;
-	try {
-		if (!id) {
-			return res.status(400).json({ error: "Id missing" });
-		}
-	} catch (error) {
-		return res.status(500).json({ error: error.message });
-	}
-	next();
+    const {id} = req.params;
+    try {
+        if (!id) {
+            return res.status(400).json({error: "Id missing"});
+        }
+    } catch (error) {
+        return res.status(500).json({error: error.message});
+    }
+    next();
 };
 
 const checkUserId = async (req, res, next) => {
-  const { userId } = req.params;
-  try {
-    if (!userId) {
-      return res.status(400).json({ error: "Id missing" });
+    const {userId} = req.params;
+    try {
+        if (!userId) {
+            return res.status(400).json({error: "Id missing"});
+        }
+    } catch (error) {
+        return res.status(500).json({error: error.message});
     }
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-  next();
+    next();
 };
 
 const getExercises = async (req, res) => {
-	try {
-		const exercises = await exerciseService.getAll();
-		res
-			.status(200)
-			.json({ status: "success", results: exercises.length, data: exercises });
-	} catch (error) {
-		res.status(404).json({ error: error.message });
-	}
+    try {
+        const exercises = await exerciseService.getAll();
+        res.status(200).json({status: "success", results: exercises.length, data: exercises});
+    } catch (error) {
+        res.status(404).json({error: error.message});
+    }
 };
 
 const createExercise = async (req, res) => {
-	try {
-		const createdExercise = await exerciseService.create(req.body);
-		res.status(201).json({ status: "success", data: { createdExercise } });
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+    try {
+        const createdExercise = await exerciseService.create(req.body);
+        res.status(201).json({status: "success", data: {createdExercise}});
+    } catch (error) {
+        res.status(500).json({error: error.message});
+    }
 };
 
 const getExerciseById = async (req, res) => {
-  try {
-    const { id } = req.params;
+    try {
+        const {id} = req.params;
 
-    const exercise = await exerciseService.getById(id);
+        const exercise = await exerciseService.getById(id);
 
-    if (!exercise) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Invalid ID",
-      });
+        if (!exercise) {
+            return res.status(404).json({
+                status: "fail",
+                message: "Invalid ID",
+            });
+        }
+
+        res.status(200).json({
+            status: "success",
+            data: {
+                exercise,
+            },
+        });
+    } catch (error) {
+        res.status(500).json({error: error.message});
     }
-
-		res.status(200).json({
-			status: "success",
-			data: {
-				exercise,
-			},
-		});
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
 };
 
 const getExerciseByUserID = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const exercise = await exerciseService.find({ userId: userId });
-    if (!exercise) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Invalid ID",
-      });
-    }
+    try {
+        const {userId} = req.params;
+        const exercise = await exerciseService.find({userId: userId});
+        if (!exercise) {
+            return res.status(404).json({
+                status: "fail",
+                message: "Invalid ID",
+            });
+        }
 
-		res.status(200).json({
-			status: "success",
-			data: {
-				exercise,
-			},
-		});
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+        res.status(200).json({
+            status: "success",
+            data: {
+                exercise,
+            },
+        });
+    } catch (error) {
+        res.status(500).json({error: error.message});
+    }
 };
 
 const getExercise = async (req, res) => {
-	try {
-		const exercise = await exerciseService.getById(req.body);
+    try {
+        const exercise = await exerciseService.getById(req.body);
 
-		if (!exercise) {
-			return res.status(404).json({
-				status: "fail",
-				message: "Invalid ID",
-			});
-		}
+        if (!exercise) {
+            return res.status(404).json({
+                status: "fail",
+                message: "Invalid ID",
+            });
+        }
 
-		res.status(200).json({
-			status: "success",
-			data: {
-				exercise,
-			},
-		});
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+        res.status(200).json({
+            status: "success",
+            data: {
+                exercise,
+            },
+        });
+    } catch (error) {
+        res.status(500).json({error: error.message});
+    }
 };
 
 const deleteExercise = async (req, res) => {
-  try {
-    const { id } = req.params;
+    try {
+        const {id} = req.params;
 
-    const exercise = await exerciseService.remove(id);
+        const exercise = await exerciseService.remove(id);
 
-    if (!exercise) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Invalid ID",
-      });
+        if (!exercise) {
+            return res.status(404).json({
+                status: "fail",
+                message: "Invalid ID",
+            });
+        }
+
+        res.status(204).json({status: "success", data: null});
+    } catch (error) {
+        res.status(500).json({error: error.message});
     }
-
-    res.status(204).json({ status: "success", data: null });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
 };
 
 const updateExercise = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const exercise = await exerciseService.update(id, req.body);
-    if (!exercise) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Invalid ID",
-      });
+    try {
+        const {id} = req.params;
+        const exercise = await exerciseService.update(id, req.body);
+        if (!exercise) {
+            return res.status(404).json({
+                status: "fail",
+                message: "Invalid ID",
+            });
+        }
+        res.status(200).json({
+            status: "success",
+            data: {
+                exercise,
+            },
+        });
+    } catch (error) {
+        res.status(500).json({error: error.message});
     }
-    res.status(200).json({
-      status: "success",
-      data: {
-        exercise,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
 };
 
 export default {
-  getExercises,
-  createExercise,
-  deleteExercise,
-  updateExercise,
-  checkData,
-  getExerciseById,
-  checkId,
-  getExercise,
-  getExerciseByUserID,
-  checkUserId,
-  checkDataToUpdate,
+    getExercises,
+    createExercise,
+    deleteExercise,
+    updateExercise,
+    checkData,
+    getExerciseById,
+    checkId,
+    getExercise,
+    getExerciseByUserID,
+    checkUserId,
+    checkDataToUpdate,
 };
