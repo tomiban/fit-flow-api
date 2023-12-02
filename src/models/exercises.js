@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import MongooseDelete from "mongoose-delete";
 
 const exercisesScheme = new mongoose.Schema(
     {
@@ -23,5 +24,5 @@ const exercisesScheme = new mongoose.Schema(
         versionKey: false,
     }
 );
-
+exercisesScheme.plugin(MongooseDelete, {overrideMethods: "all"});
 export default mongoose.model("Exercises", exercisesScheme);
