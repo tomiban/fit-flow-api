@@ -1,13 +1,12 @@
 import express from "express";
 import userController from "../../controllers/userController.js";
-
+import {validatorUpdateUser, validatorIdUser} from "../../validators/user.js";
 const router = express.Router();
 
 router
-	.get("/", userController.getAllUsers)
-	.post("/", userController.createUser)
-/* 	.get("/userId", usersController.getRoutineById)
-	.patch("/:userId", usersController.updateRoutine)
-	.delete("/:userId", usersController.deleteRoutine); */
+    .get("/", userController.getAllUsers)
+    .get("/:userId", validatorIdUser, userController.getUser)
+    .patch("/:userId", validatorIdUser, validatorUpdateUser, userController.updateUser)
+    .delete("/:userId", validatorIdUser, userController.deleteUser);
 
 export default router;

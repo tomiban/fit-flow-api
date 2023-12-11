@@ -1,22 +1,35 @@
 import mongoose from "mongoose";
+import MongooseDelete from "mongoose-delete";
 
 const userSchema = new mongoose.Schema(
-	{
-		name: String,
-		age: Number,
-		email: {
-			type: String,
-			unique: true,
-		},
-		password: {
-			type: String,
+    {
+        username: {
+            type: String,
+            unique: true,
+            required: true,
         },
-	},
-	{
-		timestamps: true,
-		versionKey: false,
-	}
+        firstName: {type: String, required: true},
+        lastName: {type: String, required: true},
+        age: {
+            type: Number,
+            required: true,
+        },
+        email: {
+            type: String,
+            unique: true,
+            required: true,
+        },
+        password: {
+            type: String,
+            required: true,
+            select: false,
+        },
+        birthDate: {type: Date},
+    },
+    {
+        timestamps: true,
+        versionKey: false,
+    }
 );
-
-
-export default mongoose.model("Users", userSchema)
+userSchema.plugin(MongooseDelete, {overrideMethods: "all"});
+export default mongoose.model("Users", userSchema);
