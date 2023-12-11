@@ -43,22 +43,6 @@ const getUser = async (req, res) => {
     }
 };
 
-const createUser = async (req, res) => {
-    try {
-        const {...body} = matchedData(req);
-
-        const newUser = await userService.create(body);
-        res.status(201).json({
-            status: "success",
-            data: {
-                user: newUser,
-            },
-        });
-    } catch (error) {
-        res.status(500).json({error: error.message});
-    }
-};
-
 const updateUser = async (req, res) => {
     try {
         req = matchedData(req);
@@ -107,7 +91,6 @@ const deleteUser = async (req, res) => {
 
 export default {
     getAllUsers,
-    createUser,
     updateUser,
     getUser,
     deleteUser,

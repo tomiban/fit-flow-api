@@ -20,6 +20,18 @@ const crudOperations = model => {
             }
         },
 
+        getByUsername: async username => {
+            try {
+                return await model.findOne(username).select("+password");
+            } catch (error) {
+                if (error.name === "CastError") {
+                    return null;
+                }
+
+                throw new Error(error.message);
+            }
+        },
+
         create: async itemData => {
             try {
                 const newItem = new model(itemData);
