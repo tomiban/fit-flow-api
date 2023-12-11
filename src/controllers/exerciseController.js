@@ -1,5 +1,6 @@
 import Exercises from "../models/exercises.js";
 import crudOperations from "../services/crudOperations.js";
+import userServices from "../services/userServices.js";
 
 const exerciseService = crudOperations(Exercises);
 
@@ -53,8 +54,14 @@ const checkUserId = async (req, res, next) => {
 
 const getExercises = async (req, res) => {
     try {
+        const {username} = req.user;
         const exercises = await exerciseService.getAll();
-        res.status(200).json({status: "success", results: exercises.length, data: exercises});
+        res.status(200).json({
+            status: "success",
+            username,
+            results: exercises.length,
+            data: exercises,
+        });
     } catch (error) {
         res.status(404).json({error: error.message});
     }
@@ -95,19 +102,34 @@ const getExerciseById = async (req, res) => {
 
 const getExerciseByUserID = async (req, res) => {
     try {
-        const {userId} = req.params;
-        const exercise = await exerciseService.find({userId: userId});
-        if (!exercise) {
+        const {userId: paramUserId} = req.params;
+
+        //usuario logeado
+        const {user} = req;
+
+        const exercises = await userServices.getExercises(paramUserId);
+
+        if (!exercises) {
             return res.status(404).json({
                 status: "fail",
                 message: "Invalid ID",
             });
         }
 
+        // Check if the userId of the logged-in user is different from the userId in the URL
+
+        if (user._id.toString() !== exercises.userId.toString()) {
+            return res.status(403).json({
+                status: "fail",
+                message: "You do not have permission to access these exercises.",
+            });
+        }
+
         res.status(200).json({
             status: "success",
             data: {
-                exercise,
+                username: user.username,
+                exercises,
             },
         });
     } catch (error) {
