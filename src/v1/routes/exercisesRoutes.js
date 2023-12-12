@@ -6,10 +6,9 @@ const router = express.Router();
 
 router
     .get("/", authMiddleware, exerciseController.getExercises)
-    .get("/:id", exerciseController.checkId, exerciseController.getExerciseById)
-    .get("/users/:userId", authMiddleware, exerciseController.checkUserId, exerciseController.getExerciseByUserID)
-    .post("/", exerciseController.checkData, exerciseController.createExercise)
-    .delete("/:id", exerciseController.checkId, exerciseController.deleteExercise)
-    .patch("/:id", exerciseController.checkId, exerciseController.checkDataToUpdate, exerciseController.updateExercise);
+    .get("/:id", authMiddleware, exerciseController.getExerciseById)
+    .post("/", authMiddleware, exerciseController.createExercise)
+    .delete("/:id", exerciseController.deleteExercise)
+    .patch("/:id", exerciseController.updateExercise);
 
 export default router;

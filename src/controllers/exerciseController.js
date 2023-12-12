@@ -4,61 +4,14 @@ import userServices from "../services/userServices.js";
 
 const exerciseService = crudOperations(Exercises);
 
-const checkData = async (req, res, next) => {
-    const {name, category, userId} = req.body;
-    try {
-        if (!name || !category || !userId) {
-            return res.status(400).json({error: "Data missing"});
-        }
-    } catch (error) {
-        return res.status(500).json({error: error.message});
-    }
-    next();
-};
-
-const checkDataToUpdate = async (req, res, next) => {
-    const {name, category, userId} = req.body;
-    try {
-        if (!name && !category && !userId) {
-            return res.status(400).json({error: "Data missing"});
-        }
-    } catch (error) {
-        return res.status(500).json({error: error.message});
-    }
-    next();
-};
-
-const checkId = async (req, res, next) => {
-    const {id} = req.params;
-    try {
-        if (!id) {
-            return res.status(400).json({error: "Id missing"});
-        }
-    } catch (error) {
-        return res.status(500).json({error: error.message});
-    }
-    next();
-};
-
-const checkUserId = async (req, res, next) => {
-    const {userId} = req.params;
-    try {
-        if (!userId) {
-            return res.status(400).json({error: "Id missing"});
-        }
-    } catch (error) {
-        return res.status(500).json({error: error.message});
-    }
-    next();
-};
-
 const getExercises = async (req, res) => {
     try {
-        const {username} = req.user;
-        const exercises = await exerciseService.getAll();
+        const {username, _id} = req.user;
+        const exercises = await userServices.getExercises(_id);
         res.status(200).json({
             status: "success",
             username,
+            _id,
             results: exercises.length,
             data: exercises,
         });
@@ -67,20 +20,13 @@ const getExercises = async (req, res) => {
     }
 };
 
-const createExercise = async (req, res) => {
-    try {
-        const createdExercise = await exerciseService.create(req.body);
-        res.status(201).json({status: "success", data: {createdExercise}});
-    } catch (error) {
-        res.status(500).json({error: error.message});
-    }
-};
-
 const getExerciseById = async (req, res) => {
     try {
         const {id} = req.params;
 
-        const exercise = await exerciseService.getById(id);
+        const {username, _id} = req.user;
+
+        const exercise = await exerciseService.getById(id, _id);
 
         if (!exercise) {
             return res.status(404).json({
@@ -92,6 +38,7 @@ const getExerciseById = async (req, res) => {
         res.status(200).json({
             status: "success",
             data: {
+                username,
                 exercise,
             },
         });
@@ -100,60 +47,11 @@ const getExerciseById = async (req, res) => {
     }
 };
 
-const getExerciseByUserID = async (req, res) => {
+const createExercise = async (req, res) => {
     try {
-        const {userId: paramUserId} = req.params;
-
-        //usuario logeado
-        const {user} = req;
-
-        const exercises = await userServices.getExercises(paramUserId);
-
-        if (!exercises) {
-            return res.status(404).json({
-                status: "fail",
-                message: "Invalid ID",
-            });
-        }
-
-        // Check if the userId of the logged-in user is different from the userId in the URL
-
-        if (user._id.toString() !== exercises.userId.toString()) {
-            return res.status(403).json({
-                status: "fail",
-                message: "You do not have permission to access these exercises.",
-            });
-        }
-
-        res.status(200).json({
-            status: "success",
-            data: {
-                username: user.username,
-                exercises,
-            },
-        });
-    } catch (error) {
-        res.status(500).json({error: error.message});
-    }
-};
-
-const getExercise = async (req, res) => {
-    try {
-        const exercise = await exerciseService.getById(req.body);
-
-        if (!exercise) {
-            return res.status(404).json({
-                status: "fail",
-                message: "Invalid ID",
-            });
-        }
-
-        res.status(200).json({
-            status: "success",
-            data: {
-                exercise,
-            },
-        });
+        const {body, user} = req;
+        const createdExercise = await userServices.createExercises(body, user._id);
+        res.status(201).json({status: "success", data: {createdExercise}});
     } catch (error) {
         res.status(500).json({error: error.message});
     }
@@ -204,11 +102,5 @@ export default {
     createExercise,
     deleteExercise,
     updateExercise,
-    checkData,
     getExerciseById,
-    checkId,
-    getExercise,
-    getExerciseByUserID,
-    checkUserId,
-    checkDataToUpdate,
 };

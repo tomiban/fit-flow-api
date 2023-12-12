@@ -5,8 +5,9 @@ import authController from "../../controllers/authController.js";
 
 const router = express.Router();
 
-router.post("/register", validatorRegisterUser, authController.registerUser);
-
-router.post("/login", validatorLoginUser, authController.loginUser);
+router
+    .post("/register", validatorRegisterUser, authController.registerUser)
+    .post("/login", validatorLoginUser, authController.loginUser)
+    .post("/logout", authController.logoutUser);
 
 export default router;

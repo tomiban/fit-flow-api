@@ -6,14 +6,13 @@ const UserModel = crudOperations(User);
 
 const authMiddleware = async (req, res, next) => {
     try {
-        if (!req.headers.authorization) {
+        const {token} = req.cookies;
+
+        if (!token) {
             return res.status(401).json({
-                status: "fail",
-                message: "NOT TOKEN",
+                message: "UNAUTHORIZED",
             });
         }
-
-        const token = req.headers.authorization.split(" ").pop();
 
         const dataToken = await verifyToken(token);
 
@@ -26,10 +25,15 @@ const authMiddleware = async (req, res, next) => {
 
         const user = await UserModel.getById(dataToken._id);
 
-        if (user) {
-            req.user = user;
-            next();
+        if (!user) {
+            return res.status(404).json({
+                status: "fail",
+                message: "INVALID TOKEN",
+            });
         }
+
+        req.user = user;
+        next();
     } catch (error) {
         return res.status(500).json({error: error.message});
     }
