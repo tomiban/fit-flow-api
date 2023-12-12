@@ -10,7 +10,7 @@ const tokenSign = async user => {
             },
             JWT_SECRET, //llave para firmar el contenido
             {
-                expiresIn: "5h",
+                expiresIn: "2h",
             }
         );
         return sign;

@@ -3,8 +3,8 @@ import User from "../models/users.js";
 import {matchedData} from "express-validator";
 import {encrypt} from "../utils/handlePassword.js";
 import {tokenSign} from "../utils/handleJwt.js";
-
 import pkg from "bcryptjs";
+
 const {compare} = pkg;
 
 const userService = createService(User);
@@ -46,9 +46,9 @@ const loginUser = async (req, res) => {
         }
         const hashPassword = user.password;
 
-        const check = await compare(password, hashPassword);
+        const isMatch = await compare(password, hashPassword);
 
-        if (!check) {
+        if (!isMatch) {
             return res.status(401).json({
                 status: "fail",
                 message: "INVALID PASSWORD",
@@ -57,12 +57,29 @@ const loginUser = async (req, res) => {
 
         user.set("password", undefined);
 
-        const loggedUser = {
-            token: await tokenSign(user),
-            user,
-        };
+        const token = await tokenSign(user);
 
-        res.status(200).json(loggedUser);
+        res.cookie("token", token); // lo mandamos como cookie
+
+        res.status(201).json({
+            status: "success",
+            data: {
+                user,
+            },
+        });
+    } catch (error) {
+        res.status(500).json({error: error.message});
+    }
+};
+
+const logoutUser = async (req, res) => {
+    try {
+        console.log("entre");
+
+        res.cookie("token", "", {
+            expires: new Date(0),
+        });
+        res.status(200).json({status: "success"});
     } catch (error) {
         res.status(500).json({error: error.message});
     }
@@ -71,4 +88,5 @@ const loginUser = async (req, res) => {
 export default {
     registerUser,
     loginUser,
+    logoutUser,
 };
