@@ -3,16 +3,20 @@ const {JWT_SECRET} = process.env;
 
 //firmar token
 const tokenSign = async user => {
-    const sign = jwt.sign(
-        {
-            _id: user._id,
-        },
-        JWT_SECRET,
-        {
-            expiresIn: "2h",
-        }
-    );
-    return sign;
+    try {
+        const sign = jwt.sign(
+            {
+                _id: user._id, //payload
+            },
+            JWT_SECRET, //llave para firmar el contenido
+            {
+                expiresIn: "5h",
+            }
+        );
+        return sign;
+    } catch (error) {
+        console.log(error.message);
+    }
 };
 
 //verificar si el token firmado es correcto

@@ -17,11 +17,14 @@ const registerUser = async (req, res) => {
         const registerUser = await userService.create(body);
         registerUser.set("password", undefined);
 
+        const token = await tokenSign(registerUser);
+
+        res.cookie("token", token); // lo mandamos como cookie
+
         res.status(201).json({
             status: "success",
             data: {
                 user: registerUser,
-                token: await tokenSign(registerUser),
             },
         });
     } catch (error) {
