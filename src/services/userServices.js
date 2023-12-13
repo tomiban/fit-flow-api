@@ -34,6 +34,29 @@ const userServices = {
             throw new Error(error.message);
         }
     },
+    update: async (exerciseId, userId, updatedData) => {
+        try {
+            return await Exercise.findOneAndUpdate({_id: exerciseId, userId: userId.toString()}, updatedData, {
+                new: true,
+                runValidators: true,
+            });
+        } catch (error) {
+            if (error.name === "CastError") {
+                return null;
+            }
+            throw new Error(error.message);
+        }
+    },
+    remove: async (exercisesId, userId) => {
+        try {
+            return await Exercise.findOneAndDelete({_id: exercisesId, userId: userId.toString()});
+        } catch (error) {
+            if (error.name === "CastError") {
+                return null;
+            }
+            throw new Error(error.message);
+        }
+    },
 };
 
 export default userServices;

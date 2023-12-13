@@ -5,6 +5,7 @@ const exercisesScheme = new mongoose.Schema(
     {
         userId: {
             type: mongoose.Types.ObjectId,
+            ref: "User",
         },
         name: {type: String, required: [true, "Name is required"], trim: true},
         actualWeigth: {type: Number, default: 0},
@@ -24,4 +25,4 @@ const exercisesScheme = new mongoose.Schema(
     }
 );
 exercisesScheme.plugin(MongooseDelete, {overrideMethods: "all"});
-export default mongoose.model("Exercises", exercisesScheme);
+export default mongoose.model("Exercise", exercisesScheme);

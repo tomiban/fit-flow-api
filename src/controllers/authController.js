@@ -1,9 +1,9 @@
 import createService from "../services/crudOperations.js";
 import User from "../models/users.js";
-import {matchedData} from "express-validator";
 import {encrypt} from "../utils/handlePassword.js";
 import {tokenSign} from "../utils/handleJwt.js";
 import pkg from "bcryptjs";
+import {matchedData} from "express-validator";
 
 const {compare} = pkg;
 
@@ -11,10 +11,12 @@ const userService = createService(User);
 
 const registerUser = async (req, res) => {
     try {
-        req = matchedData(req);
-        const password = await encrypt(req.password);
-        const body = {...req, password};
-        const registerUser = await userService.create(body);
+        const validatedData = matchedData(req);
+        console.log(validatedData);
+
+        const password = await encrypt(validatedData.password);
+        const newUser = {...validatedData, password};
+        const registerUser = await userService.create(newUser);
         registerUser.set("password", undefined);
 
         const token = await tokenSign(registerUser);
@@ -34,7 +36,9 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
-        const {username, password} = matchedData(req);
+        const validatedData = matchedData(req);
+
+        const {username, password} = validatedData;
 
         const user = await userService.getByUsername({username: username});
 

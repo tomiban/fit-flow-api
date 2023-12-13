@@ -32,4 +32,4 @@ const userSchema = new mongoose.Schema(
     }
 );
 userSchema.plugin(MongooseDelete, {overrideMethods: "all"});
-export default mongoose.model("Users", userSchema);
+export default mongoose.model("User", userSchema);
