@@ -34,4 +34,4 @@ const rutinaSchema = new mongoose.Schema({
     },
 });
 
-export default mongoose.model("Routines", rutinaSchema);
+export default mongoose.model("Routine", rutinaSchema);
