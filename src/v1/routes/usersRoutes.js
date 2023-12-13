@@ -1,12 +1,11 @@
 import express from "express";
 import userController from "../../controllers/userController.js";
-import {validatorUpdateUser, validatorIdUser} from "../../validators/user.js";
 const router = express.Router();
 
 router
     .get("/", userController.getAllUsers)
-    .get("/:userId", validatorIdUser, userController.getUser)
-    .patch("/:userId", validatorIdUser, validatorUpdateUser, userController.updateUser)
-    .delete("/:userId", validatorIdUser, userController.deleteUser);
+    .get("/:userId", userController.getUser)
+    .patch("/:userId", userController.updateUser)
+    .delete("/:userId", userController.deleteUser);
 
 export default router;

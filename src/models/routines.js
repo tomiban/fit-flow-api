@@ -1,32 +1,10 @@
 import mongoose from "mongoose";
+import exerciseSchema from "./exercises";
 
 const rutinaSchema = new mongoose.Schema({
-    nombre: String,
-    usuario: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Usuario",
-        required: true,
-    },
-    fecha_creacion: {
-        type: Date,
-        default: Date.now,
-    },
-    fecha_realizacion: Date,
-    tiempo_descanso_entre_ejercicios: Number,
-    tiempo_descanso_entre_series: Number,
-    ejercicios: [
-        {
-            ejercicio: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Ejercicio",
-                required: true,
-            },
-            series: Number,
-            repeticiones: Number,
-            peso: Number,
-            orden: Number,
-        },
-    ],
+    name: {type: String, required: true},
+    exercises: [exerciseSchema], // Embebemos el esquema de ejercicio directamente
+    userId: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
     estado_reproduccion: {
         type: String,
         enum: ["en_espera", "en_progreso", "completada"],
