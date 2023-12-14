@@ -1,8 +1,5 @@
 import {verifyToken} from "../utils/handleJwt.js";
-import User from "../models/users.js";
-import crudOperations from "../services/crudOperations.js";
-
-const UserModel = crudOperations(User);
+import userServices from "../services/userServices.js";
 
 const authMiddleware = async (req, res, next) => {
     try {
@@ -23,7 +20,7 @@ const authMiddleware = async (req, res, next) => {
             });
         }
 
-        const user = await UserModel.getById(dataToken._id);
+        const user = await userServices.getById(dataToken._id);
 
         if (!user) {
             return res.status(404).json({
