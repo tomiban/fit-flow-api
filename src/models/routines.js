@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
-import exerciseSchema from "./exercises";
+import {exercisesScheme} from "./exercises.js";
 
-const rutinaSchema = new mongoose.Schema({
+const routineSchema = new mongoose.Schema({
     name: {type: String, required: true},
-    exercises: [exerciseSchema], // Embebemos el esquema de ejercicio directamente
+    exercises: [exercisesScheme],
     userId: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
     estado_reproduccion: {
         type: String,
@@ -12,4 +12,4 @@ const rutinaSchema = new mongoose.Schema({
     },
 });
 
-export default mongoose.model("Routine", rutinaSchema);
+export default mongoose.model("Routine", routineSchema);

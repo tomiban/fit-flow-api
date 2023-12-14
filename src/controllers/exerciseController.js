@@ -1,15 +1,11 @@
-import Exercises from "../models/exercises.js";
-import crudOperations from "../services/crudOperations.js";
-import userServices from "../services/userServices.js";
-
-const exerciseService = crudOperations(Exercises);
+import exercisesService from "../services/exercisesService.js";
 
 const createExercise = async (req, res) => {
     try {
         const {body, user} = req;
         const {username, _id} = user;
 
-        const createdExercise = await userServices.createExercises(body, _id);
+        const createdExercise = await exercisesService.create(body, _id);
 
         res.status(201).json({status: "success", username, data: {createdExercise}});
     } catch (error) {
@@ -20,7 +16,7 @@ const createExercise = async (req, res) => {
 const getExercises = async (req, res) => {
     try {
         const {username, _id} = req.user;
-        const exercises = await userServices.getExercises(_id);
+        const exercises = await exercisesService.getAll(_id);
         res.status(200).json({
             status: "success",
             username,
@@ -38,7 +34,7 @@ const getExerciseById = async (req, res) => {
 
         const {username, _id} = req.user;
 
-        const exercise = await exerciseService.getById(id, _id);
+        const exercise = await exercisesService.getById(id, _id);
 
         if (!exercise) {
             return res.status(404).json({
@@ -64,7 +60,7 @@ const updateExercise = async (req, res) => {
         const {id: exerciseId} = req.params;
         const {_id: userId, username} = req.user;
 
-        const exercise = await userServices.update(exerciseId, userId, req.body);
+        const exercise = await exercisesService.update(exerciseId, userId, req.body);
         if (!exercise) {
             return res.status(404).json({
                 status: "fail",
@@ -88,7 +84,7 @@ const deleteExercise = async (req, res) => {
         const {id: exerciseId} = req.params;
         const {_id: userId} = req.user;
 
-        const exercise = await userServices.remove(exerciseId, userId);
+        const exercise = await exercisesService.remove(exerciseId, userId);
 
         if (!exercise) {
             return res.status(404).json({

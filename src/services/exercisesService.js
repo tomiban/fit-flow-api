@@ -1,7 +1,7 @@
 import Exercise from "../models/exercises.js";
 
-const userServices = {
-    getExercises: async userId => {
+const exercisesServices = {
+    getAll: async userId => {
         try {
             return await Exercise.find({userId: userId});
         } catch (error) {
@@ -26,7 +26,7 @@ const userServices = {
             throw new Error(error.message);
         }
     },
-    createExercises: async (exercise, userId) => {
+    create: async (exercise, userId) => {
         try {
             const newItem = new Exercise({userId, ...exercise});
             return await newItem.save();
@@ -59,4 +59,4 @@ const userServices = {
     },
 };
 
-export default userServices;
+export default exercisesServices;
