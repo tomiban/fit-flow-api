@@ -1,16 +1,9 @@
-import User from "../models/users.js";
-const userServices = {
-    getAll: async () => {
-        try {
-            return await User.find();
-        } catch (error) {
-            throw new Error(error.message);
-        }
-    },
+import Exercise from "../models/exercises.js";
 
-    getById: async itemId => {
+const exercisesServices = {
+    getAll: async userId => {
         try {
-            return await User.findById(itemId);
+            return await Exercise.find({userId: userId});
         } catch (error) {
             if (error.name === "CastError") {
                 return null;
@@ -19,10 +12,12 @@ const userServices = {
             throw new Error(error.message);
         }
     },
-
-    getByUsername: async username => {
+    getById: async (exerciseId, userId) => {
         try {
-            return await User.findOne(username).select("+password");
+            return await Exercise.findOne({
+                _id: exerciseId,
+                userId: userId,
+            });
         } catch (error) {
             if (error.name === "CastError") {
                 return null;
@@ -31,19 +26,17 @@ const userServices = {
             throw new Error(error.message);
         }
     },
-
-    create: async itemData => {
+    create: async (exercise, userId) => {
         try {
-            const newItem = new User(itemData);
+            const newItem = new Exercise({userId, ...exercise});
             return await newItem.save();
         } catch (error) {
             throw new Error(error.message);
         }
     },
-
-    update: async (itemId, updatedData) => {
+    update: async (exerciseId, userId, updatedData) => {
         try {
-            return await User.findByIdAndUpdate(itemId, updatedData, {
+            return await Exercise.findOneAndUpdate({_id: exerciseId, userId: userId.toString()}, updatedData, {
                 new: true,
                 runValidators: true,
             });
@@ -54,10 +47,9 @@ const userServices = {
             throw new Error(error.message);
         }
     },
-
-    remove: async itemId => {
+    remove: async (exercisesId, userId) => {
         try {
-            return await User.delete({_id: itemId});
+            return await Exercise.findOneAndDelete({_id: exercisesId, userId: userId.toString()});
         } catch (error) {
             if (error.name === "CastError") {
                 return null;
@@ -67,4 +59,4 @@ const userServices = {
     },
 };
 
-export default userServices;
+export default exercisesServices;

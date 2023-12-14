@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import MongooseDelete from "mongoose-delete";
 
-const exercisesScheme = new mongoose.Schema(
+export const exercisesScheme = new mongoose.Schema(
     {
         userId: {
             type: mongoose.Types.ObjectId,

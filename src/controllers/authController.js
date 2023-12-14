@@ -1,22 +1,18 @@
-import createService from "../services/crudOperations.js";
-import User from "../models/users.js";
 import {encrypt} from "../utils/handlePassword.js";
 import {tokenSign} from "../utils/handleJwt.js";
 import pkg from "bcryptjs";
 import {matchedData} from "express-validator";
+import userServices from "../services/userServices.js";
 
 const {compare} = pkg;
-
-const userService = createService(User);
 
 const registerUser = async (req, res) => {
     try {
         const validatedData = matchedData(req);
-        console.log(validatedData);
 
         const password = await encrypt(validatedData.password);
         const newUser = {...validatedData, password};
-        const registerUser = await userService.create(newUser);
+        const registerUser = await userServices.create(newUser);
         registerUser.set("password", undefined);
 
         const token = await tokenSign(registerUser);
@@ -40,7 +36,7 @@ const loginUser = async (req, res) => {
 
         const {username, password} = validatedData;
 
-        const user = await userService.getByUsername({username: username});
+        const user = await userServices.getByUsername({username: username});
 
         if (!user) {
             return res.status(404).json({

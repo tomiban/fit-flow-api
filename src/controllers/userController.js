@@ -1,11 +1,8 @@
-import createService from "../services/crudOperations.js";
-import User from "../models/users.js";
-
-const userService = createService(User);
+import userServices from "../services/userServices.js";
 
 const getAllUsers = async (req, res) => {
     try {
-        const allUsers = await userService.getAll();
+        const allUsers = await userServices.getAll();
         res.status(200).json({
             status: "success",
             results: allUsers.length,
@@ -21,7 +18,7 @@ const getAllUsers = async (req, res) => {
 const getUser = async (req, res) => {
     try {
         const {userId} = req.params;
-        const user = await userService.getById(userId);
+        const user = await userServices.getById(userId);
 
         if (!user) {
             return res.status(404).json({
@@ -45,7 +42,7 @@ const updateUser = async (req, res) => {
     try {
         const {params, ...body} = req;
 
-        const updatedUser = await userService.update(params.userId, body);
+        const updatedUser = await userServices.update(params.userId, body);
 
         if (!updatedUser) {
             return res.status(400).json({
@@ -68,7 +65,7 @@ const deleteUser = async (req, res) => {
             params: {userId},
         } = req;
 
-        const userRemoved = await userService.remove(userId);
+        const userRemoved = await userServices.remove(userId);
 
         if (!userRemoved) {
             return res.status(400).json({
