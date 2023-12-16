@@ -48,7 +48,7 @@ const getExerciseRoutine = catchAsync(async (req, res) => {
     const {id: routineId, exeId} = req.params;
     const {_id: userId} = req.user;
     const exercise = await routineServices.getExercise(routineId, exeId, userId);
-    response(res, 200, exercise);
+    response(res, httpStatus.OK, exercise);
 });
 
 const createExerciseRoutine = catchAsync(async (req, res) => {
