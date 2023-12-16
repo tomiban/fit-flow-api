@@ -3,87 +3,60 @@ import {tokenSign} from "../utils/handleJwt.js";
 import pkg from "bcryptjs";
 import {matchedData} from "express-validator";
 import userServices from "../services/userServices.js";
+import {catchAsync} from "../utils/catchedAsync.js";
+import {response} from "../utils/response.js";
+import {ApiError} from "../utils/errors.js";
+import httpStatus from "http-status";
 
 const {compare} = pkg;
 
-const registerUser = async (req, res) => {
-    try {
-        const validatedData = matchedData(req);
+const registerUser = catchAsync(async (req, res) => {
+    const validatedData = matchedData(req);
+    const password = await encrypt(validatedData.password);
+    const newUser = {...validatedData, password};
+    const registeredUser = await userServices.create(newUser);
+    registeredUser.set("password", undefined);
+    const token = await tokenSign(registeredUser);
 
-        const password = await encrypt(validatedData.password);
-        const newUser = {...validatedData, password};
-        const registerUser = await userServices.create(newUser);
-        registerUser.set("password", undefined);
-
-        const token = await tokenSign(registerUser);
-
-        res.cookie("token", token); // lo mandamos como cookie
-
-        res.status(201).json({
-            status: "success",
-            data: {
-                user: registerUser,
-            },
-        });
-    } catch (error) {
-        res.status(500).json({error: error.message});
+    if (!registeredUser) {
+        throw new ApiError(httpStatus.BAD_REQUEST, "");
     }
-};
 
-const loginUser = async (req, res) => {
-    try {
-        const validatedData = matchedData(req);
+    res.cookie("token", token);
 
-        const {username, password} = validatedData;
+    response(res, httpStatus.CREATED, {user: registeredUser});
+});
 
-        const user = await userServices.getByUsername({username: username});
+const loginUser = catchAsync(async (req, res) => {
+    const validatedData = matchedData(req);
+    const {username, password} = validatedData;
+    const user = await userServices.getByUsername({username: username});
 
-        if (!user) {
-            return res.status(404).json({
-                status: "fail",
-                message: "USER NOT FOUND",
-            });
-        }
-        const hashPassword = user.password;
-
-        const isMatch = await compare(password, hashPassword);
-
-        if (!isMatch) {
-            return res.status(401).json({
-                status: "fail",
-                message: "INVALID PASSWORD",
-            });
-        }
-
-        user.set("password", undefined);
-
-        const token = await tokenSign(user);
-
-        res.cookie("token", token); // lo mandamos como cookie
-
-        res.status(201).json({
-            status: "success",
-            data: {
-                user,
-            },
-        });
-    } catch (error) {
-        res.status(500).json({error: error.message});
+    if (!user) {
+        throw new ApiError(httpStatus.NOT_FOUND, "User not found");
     }
-};
 
-const logoutUser = async (req, res) => {
-    try {
-        console.log("entre");
+    const hashPassword = user.password;
+    const isMatch = await compare(password, hashPassword);
 
-        res.cookie("token", "", {
-            expires: new Date(0),
-        });
-        res.status(200).json({status: "success"});
-    } catch (error) {
-        res.status(500).json({error: error.message});
+    if (!isMatch) {
+        throw new ApiError(httpStatus.UNAUTHORIZED, "Invalid password");
     }
-};
+
+    user.set("password", undefined);
+
+    const token = await tokenSign(user);
+
+    res.cookie("token", token); // lo mandamos como cookie
+    response(res, httpStatus.OK, {user});
+});
+
+const logoutUser = catchAsync(async (req, res) => {
+    res.cookie("token", "", {
+        expires: new Date(0),
+    });
+    response(res, httpStatus.NO_CONTENT);
+});
 
 export default {
     registerUser,

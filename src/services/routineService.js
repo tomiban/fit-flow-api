@@ -1,43 +1,40 @@
+import httpStatus from "http-status";
+import mongoose from "mongoose";
 import Exercise from "../models/exercises.js";
 import Routine from "../models/routines.js";
+import {ApiError} from "../utils/errors.js";
 
 const routineServices = {
     getAll: async userId => {
         try {
             return await Routine.find({userId: userId});
         } catch (error) {
-            if (error.name === "CastError") {
-                return null;
-            }
-
-            throw new Error(error.message);
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error while fetching data");
         }
     },
-    getById: async (RoutineId, userId) => {
+    getById: async (routineId, userId) => {
         try {
             return await Routine.findOne({
-                _id: RoutineId,
+                _id: routineId,
                 userId: userId,
             });
         } catch (error) {
-            if (error.name === "CastError") {
-                return null;
+            console.log(error, "entre");
+            if (error instanceof mongoose.Error.CastError) {
+                throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Id");
             }
-
-            throw new Error(error.message);
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error while fetching data");
         }
     },
     create: async (routine, userId) => {
         try {
             const newItem = new Routine({userId, ...routine});
-            console.log(newItem);
 
             return await newItem.save();
         } catch (error) {
-            throw new Error(error.message);
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error while fetching data");
         }
     },
-
     update: async (routineId, userId, updatedData) => {
         try {
             return await Routine.findOneAndUpdate({_id: routineId, userId: userId.toString()}, updatedData, {
@@ -45,26 +42,29 @@ const routineServices = {
                 runValidators: true,
             });
         } catch (error) {
-            if (error.name === "CastError") {
-                return null;
+            if (error instanceof mongoose.Error.CastError) {
+                throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Id");
             }
-            throw new Error(error.message);
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error while fetching data");
         }
     },
-
-    remove: async (exercisesId, userId) => {
+    remove: async (routineId, userId) => {
         try {
-            return await Routine.findOneAndDelete({_id: exercisesId, userId: userId.toString()});
+            return await Routine.findOneAndDelete({_id: routineId, userId: userId.toString()});
         } catch (error) {
-            if (error.name === "CastError") {
-                return null;
+            console.log(error);
+
+            if (error instanceof mongoose.Error.CastError) {
+                throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Id");
             }
-            throw new Error(error.message);
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error while fetching data");
         }
     },
     addExercise: async (routineId, userId, exerciseData) => {
         try {
-            if (!exerciseData) throw new Error();
+            if (!exerciseData) {
+                throw new ApiError(httpStatus.BAD_REQUEST, "Exercise data is required");
+            }
 
             const newExercise = new Exercise(exerciseData);
 
@@ -75,7 +75,10 @@ const routineServices = {
             );
             return updatedRoutine || null;
         } catch (error) {
-            throw new Error(error.message);
+            if (error instanceof mongoose.Error.CastError) {
+                throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Id");
+            }
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error while fetching data");
         }
     },
     getExercise: async (routineId, exerciseId, userId) => {
@@ -95,11 +98,10 @@ const routineServices = {
 
             return exercise;
         } catch (error) {
-            if (error.name === "CastError") {
-                return null;
+            if (error instanceof mongoose.Error.CastError) {
+                throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Id");
             }
-
-            throw new Error(error.message);
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error while fetching data");
         }
     },
     updateExercise: async (routineId, exerciseId, userId, updatedData) => {
@@ -123,10 +125,10 @@ const routineServices = {
 
             return updatedRoutine;
         } catch (error) {
-            if (error.name === "CastError") {
-                return null;
+            if (error instanceof mongoose.Error.CastError) {
+                throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Id");
             }
-            throw new Error(error.message);
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error while fetching data");
         }
     },
     removeExercise: async (routineId, exerciseId, userId) => {
@@ -142,10 +144,10 @@ const routineServices = {
 
             return updatedRoutine;
         } catch (error) {
-            if (error.name === "CastError") {
-                return null;
+            if (error instanceof mongoose.Error.CastError) {
+                throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Id");
             }
-            throw new Error(error.message);
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error while fetching data");
         }
     },
 };
