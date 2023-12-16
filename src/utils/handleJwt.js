@@ -15,7 +15,7 @@ const tokenSign = async user => {
         );
         return sign;
     } catch (error) {
-        console.log(error.message);
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error while fetching data");
     }
 };
 

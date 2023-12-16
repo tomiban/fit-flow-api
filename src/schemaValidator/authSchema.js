@@ -6,8 +6,12 @@ const registerSchema = z.object({
             required_error: "Username is required",
         })
         .min(6, {message: "Username must be at least 6 characters"}),
-    firstName: z.string().regex(/^[A-Za-z]+$/, {message: "Invalid first name"}),
-    lastName: z.string().regex(/^[A-Za-z]+$/, {message: "Invalid last name"}),
+    firstName: z
+        .string({
+            required_error: "First name is required",
+        })
+        .regex(/^[A-Za-z]+$/, {message: "Invalid first name"}),
+    lastName: z.string({required_error: "Last name is required"}).regex(/^[A-Za-z]+$/, {message: "Invalid last name"}),
     age: z
         .number({
             required_error: "Age is required",
@@ -17,7 +21,7 @@ const registerSchema = z.object({
 
     email: z
         .string({
-            required_error: "Username is required",
+            required_error: "Email is required",
         })
         .email({message: "Invalid email"}),
 

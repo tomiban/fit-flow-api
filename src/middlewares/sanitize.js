@@ -1,8 +1,8 @@
 import {body, validationResult} from "express-validator";
 
 const sanitizeLogin = [
-    body("username").trim().escape(),
-    body("password").trim().escape(),
+    body("username"),
+    body("password"),
     (req, res, next) => {
         try {
             validationResult(req).throw();
@@ -15,13 +15,13 @@ const sanitizeLogin = [
 ];
 
 const sanitizeRegister = [
-    body("username").trim().escape(),
-    body("password").trim().escape(),
-    body("firstName").trim().escape(),
-    body("lastName").trim().escape(),
-    body("age").isInt(),
-    body("email").trim().escape(),
-    body("date").trim().escape(),
+    body("username"),
+    body("password"),
+    body("firstName"),
+    body("lastName"),
+    body("age"),
+    body("email"),
+    body("date"),
     (req, res, next) => {
         try {
             validationResult(req).throw();

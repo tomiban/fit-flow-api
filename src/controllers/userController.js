@@ -1,87 +1,39 @@
+import httpStatus from "http-status";
 import userServices from "../services/userServices.js";
+import {catchAsync} from "../utils/catchedAsync.js";
+import {response} from "../utils/response.js";
+import {ApiError} from "../utils/errors.js";
 
-const getAllUsers = async (req, res) => {
-    try {
-        const allUsers = await userServices.getAll();
-        res.status(200).json({
-            status: "success",
-            results: allUsers.length,
-            data: {
-                allUsers,
-            },
-        });
-    } catch (error) {
-        res.status(500).json({error: error.message});
+const getAllUsers = catchAsync(async (req, res) => {
+    const allUsers = await userServices.getAll();
+    response(res, httpStatus.OK, allUsers);
+});
+
+const getUser = catchAsync(async (req, res) => {
+    const {userId} = req.params;
+    const user = await userServices.getById(userId);
+    if (!user) {
+        throw new ApiError(httpStatus.NOT_FOUND, "User not found");
     }
-};
+    response(res, httpStatus.OK, user);
+});
 
-const getUser = async (req, res) => {
-    try {
-        const {userId} = req.params;
-        const user = await userServices.getById(userId);
-
-        if (!user) {
-            return res.status(404).json({
-                status: "fail",
-                message: "Invalid ID",
-            });
-        }
-
-        res.status(200).json({
-            status: "success",
-            data: {
-                user,
-            },
-        });
-    } catch (error) {
-        res.status(500).json({error: error.message});
+const updateUser = catchAsync(async (req, res) => {
+    const {params, ...body} = req;
+    const updatedUser = await userServices.update(params.userId, body);
+    if (!updatedUser) {
+        throw new ApiError(httpStatus.BAD_REQUEST, "Bad Request");
     }
-};
+    response(res, httpStatus.OK, updatedUser);
+});
 
-const updateUser = async (req, res) => {
-    try {
-        const {params, ...body} = req;
-
-        const updatedUser = await userServices.update(params.userId, body);
-
-        if (!updatedUser) {
-            return res.status(400).json({
-                status: "fail",
-                data: {
-                    error: "Invalid ID",
-                },
-            });
-        }
-
-        res.status(200).json(updatedUser);
-    } catch (error) {
-        res.status(500).json({error: error.message});
-    }
-};
-
-const deleteUser = async (req, res) => {
-    try {
-        const {
-            params: {userId},
-        } = req;
-
-        const userRemoved = await userServices.remove(userId);
-
-        if (!userRemoved) {
-            return res.status(400).json({
-                status: "fail",
-                message: "Invalid ID",
-            });
-        }
-
-        res.status(204).json({
-            status: "success",
-            data: null,
-        });
-    } catch (error) {
-        res.status(500).json({error: error.message});
-    }
-};
+const deleteUser = catchAsync(async (req, res) => {
+    const {
+        params: {userId},
+    } = req;
+    const userRemoved = await userServices.remove(userId);
+    response(res, httpStatus.NO_CONTENT, userRemoved);
+});
 
 export default {
     getAllUsers,

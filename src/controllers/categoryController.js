@@ -1,26 +1,17 @@
+import httpStatus from "http-status";
 import Category from "../models/category.js";
+import {catchAsync} from "../utils/catchedAsync.js";
+import {response} from "../utils/response.js";
 
-const createCategory = async (req, res) => {
-    try {
-        const createdCategory = await Category.create(req.body);
-        res.status(201).json({status: "success", data: {createdCategory}});
-    } catch (error) {
-        res.status(500).json({error: error.message});
-    }
-};
+const createCategory = catchAsync(async (req, res) => {
+    const createdCategory = await Category.create(req.body);
+    response(res, httpStatus.CREATED, createdCategory);
+});
 
-const getCategories = async (req, res) => {
-    try {
-        const allCategories = await Category.find();
-        res.status(200).json({
-            status: "success",
-            results: allCategories.length,
-            data: {categories: allCategories},
-        });
-    } catch (error) {
-        res.status(500).json({error: error.message});
-    }
-};
+const getCategories = catchAsync(async (req, res) => {
+    const allCategories = await Category.find();
+    response(res, httpStatus.OK, allCategories);
+});
 
 export default {
     createCategory,

@@ -1,10 +1,14 @@
+import httpStatus from "http-status";
 import User from "../models/users.js";
+import {ApiError} from "../utils/errors.js";
+import mongoose from "mongoose";
+
 const userServices = {
     getAll: async () => {
         try {
             return await User.find();
         } catch (error) {
-            throw new Error(error.message);
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error while fetching data");
         }
     },
 
@@ -12,11 +16,10 @@ const userServices = {
         try {
             return await User.findById(itemId);
         } catch (error) {
-            if (error.name === "CastError") {
-                return null;
+            if (error instanceof mongoose.Error.CastError) {
+                throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Id");
             }
-
-            throw new Error(error.message);
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error while fetching data");
         }
     },
 
@@ -24,11 +27,7 @@ const userServices = {
         try {
             return await User.findOne(username).select("+password");
         } catch (error) {
-            if (error.name === "CastError") {
-                return null;
-            }
-
-            throw new Error(error.message);
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error while fetching data");
         }
     },
 
@@ -37,7 +36,18 @@ const userServices = {
             const newItem = new User(itemData);
             return await newItem.save();
         } catch (error) {
-            throw new Error(error.message);
+            if (error.code == 11000) {
+                const duplicateKeyErrors = Object.keys(error.keyValue).map(key => ({
+                    key,
+                    value: error.keyValue[key],
+                }));
+
+                throw new ApiError(
+                    httpStatus.CONFLICT,
+                    duplicateKeyErrors.map(err => `Duplicate key errors: [${err.key}] ${err.value}`)
+                );
+            }
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error while fetching data");
         }
     },
 
@@ -48,10 +58,10 @@ const userServices = {
                 runValidators: true,
             });
         } catch (error) {
-            if (error.name === "CastError") {
-                return null;
+            if (error instanceof mongoose.Error.CastError) {
+                throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Id");
             }
-            throw new Error(error.message);
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error while fetching data");
         }
     },
 
@@ -59,10 +69,10 @@ const userServices = {
         try {
             return await User.delete({_id: itemId});
         } catch (error) {
-            if (error.name === "CastError") {
-                return null;
+            if (error instanceof mongoose.Error.CastError) {
+                throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Id");
             }
-            throw new Error(error.message);
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error while fetching data");
         }
     },
 };
